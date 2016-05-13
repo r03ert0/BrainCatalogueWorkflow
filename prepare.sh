@@ -1,24 +1,23 @@
 #!/bin/bash
 # v12
 
-txtmesh=$1
+plymesh=$1
 fsmesh=$2
 
 # meshparam converts a mesh (euler=2) into a sphere
-meshparam=/Users/roberto/Applications/brainbits/m.meshparam/build/Debug/meshparam
-
-# stripmesh extracts vertices and triangles from a mesh
-stripmesh=/Users/roberto/Applications/brainbits/m.stripmesh/stripmesh
+# meshparam=/Users/roberto/Applications/brainbits/m.meshparam/build/Debug/meshparam
+meshparam=/Users/ghfc/Applications/brainbits/meshparam/meshparam
 
 # meshgreometry can do a lot of different operations on meshes
-meshgeometry=/Users/roberto/Applications/brainbits/m.meshgeometry/meshgeometry_mac
+# meshgeometry=/Users/roberto/Applications/brainbits/m.meshgeometry/meshgeometry_mac
+meshgeometry=/Users/ghfc/Applications/brainbits/meshgeometry/meshgeometry_mac
 
 echo START
 date
 
-echo "subdivide "$txtmesh", and save as freesurfer"
+echo "subdivide "$plymesh", and save as freesurfer"
 #  -v                                                              be verbose about what you do
-#  -i $txtmesh.txt                                                 input mesh
+#  -i $plymesh.ply                                                 input mesh
 #  -subdivide                                                      subdivide the input mesh (add vertices to make it smooth)
 #  -centre                                                         displace the mesh to it's centre
 #  -o $fsmesh.white                                                write the result and use it as freesurfer's "white matter" segmentation
@@ -27,7 +26,7 @@ echo "subdivide "$txtmesh", and save as freesurfer"
 #  -icurv 20                  -o $fsmesh.sulc -o $fsmesh.inflated  apply integrated smoothing, use the result as "sulc" file
 #  -curv                      -o $fsmesh.inflated.curv             icurv smoothes the mesh, use this mesh as FS's inflated mesh
 $meshgeometry	-v \
-				-i $txtmesh.txt \
+				-i $plymesh.ply \
 				-subdivide \
 				-centre \
 				-o $fsmesh.white \
@@ -38,14 +37,14 @@ $meshgeometry	-v \
 echo "rename inflated.curv to inflated.H"
 mv $fsmesh.inflated.curv $fsmesh.inflated.H
 
-echo "convert "$txtmesh" to sphere"
-$meshparam -i ${txtmesh}.txt -o ${txtmesh}.sphere.ply
+echo "convert "$plymesh" to sphere"
+$meshparam -i ${plymesh}.ply -o ${plymesh}.sphere.ply
 
 echo "make the distribution of vertices over the sphere uniform, then align, subdivide and save as freesurfer"
 $meshgeometry	-v \
-				-i ${txtmesh}.sphere.ply \
+				-i ${plymesh}.sphere.ply \
 				-uniform \
-				-align ${txtmesh}.txt \
+				-align ${plymesh}.ply \
 				-subdivide \
 				-centre \
 				-o $fsmesh.sphere
