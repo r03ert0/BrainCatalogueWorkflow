@@ -2,7 +2,9 @@
 
 
 # original
-db1=( baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan )
+db1=( gorilla
+#baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan
+)
 
 src=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered
 
@@ -12,7 +14,7 @@ mg=/Users/ghfc/Applications/brainbits/meshgeometry/meshgeometry_mac
 # process
 for i in ${db1[@]}
 do
-	mkdir $dst/$i
+	mkdir $src/$i
 	mkdir $src/$i/surfaceratio
 
     $mg -i $src/$i/left.ply -o $src/$i/surfaceratio/left.pial
