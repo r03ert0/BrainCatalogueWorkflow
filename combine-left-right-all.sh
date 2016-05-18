@@ -13,8 +13,9 @@
 # mg=/Users/ghfc/Applications/brainbits/meshgeometry/meshgeometry_mac
 
 # original
-db1=( #baboon
-capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan gorilla )
+db1=( slow_loris_scaled
+#baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan gorilla
+)
 
 src=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered
 

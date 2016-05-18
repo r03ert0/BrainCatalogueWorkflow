@@ -2,8 +2,8 @@
 
 
 # original
-db1=( gorilla
-#baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan
+db1=( slow_loris_scaled
+#gorilla baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan
 )
 
 src=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered
