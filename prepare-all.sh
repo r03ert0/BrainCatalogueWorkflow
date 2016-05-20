@@ -6,7 +6,9 @@
 # an updated location for the files
 
 # original
-db1=( baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan )
+db1=( roberto
+#baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan gorilla
+)
 
 src=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered
 dst=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results

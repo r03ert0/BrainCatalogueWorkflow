@@ -13,7 +13,7 @@
 # mg=/Users/ghfc/Applications/brainbits/meshgeometry/meshgeometry_mac
 
 # original
-db1=( slow_loris_scaled
+db1=( roberto
 #baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan gorilla
 )
 

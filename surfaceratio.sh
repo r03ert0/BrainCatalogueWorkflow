@@ -2,7 +2,7 @@
 
 
 # original
-db1=( slow_loris_scaled
+db1=( roberto
 #gorilla baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan
 )
 
