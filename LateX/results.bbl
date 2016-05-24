@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+
+\bibitem{koenderink1987representation}
+Jan~J Koenderink and Andrea~J van Doorn.
+\newblock Representation of local geometry in the visual system.
+\newblock {\em Biological cybernetics}, 55(6):367--375, 1987.
+
+\bibitem{lefevre2015spherical}
+Julien Lef{\`e}vre and Guillaume Auzias.
+\newblock Spherical parameterization for genus zero surfaces using
+  laplace-beltrami eigenfunctions.
+\newblock In {\em Geometric Science of Information}, pages 121--129. Springer,
+  2015.
+
+\end{thebibliography}
