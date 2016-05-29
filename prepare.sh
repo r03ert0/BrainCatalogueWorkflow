@@ -37,8 +37,8 @@ $meshgeometry	-v \
 echo "rename inflated.curv to inflated.H"
 mv $fsmesh.inflated.curv $fsmesh.inflated.H
 
-echo "convert "$plymesh" to sphere"
-$meshparam -i ${plymesh}.ply -o ${plymesh}.sphere.ply
+#echo "convert "$plymesh" to sphere"
+#$meshparam -i ${plymesh}.ply -o ${plymesh}.sphere.ply #to use Julien's spheres: safe the spheres generated in matlab first and comment this out
 
 echo "make the distribution of vertices over the sphere uniform, then align, subdivide and save as freesurfer"
 $meshgeometry	-v \

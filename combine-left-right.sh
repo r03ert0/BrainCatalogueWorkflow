@@ -12,6 +12,7 @@ right=$3   # meshes_centered/baboon/right.ply
 leftsr=$4  # meshes_centered/baboon/surfaceratio/left.sratio.txt
 rightsr=$5 # meshes_centered/baboon/surfaceratio/right.sratio.txt
 
+
 awk '\
   BEGIN{f=0;state=0}\
   (FNR==1){state+=1}\
