@@ -6,7 +6,9 @@
 # an updated location for the files
 
 # original
-db1=( roberto baboon capuchin ce_macaque douroucouli mangabey galago slow_loris orangutan gorilla)
+db1=( baboon ce_macaque 
+#douroucouli roberto capuchin mangabey galago slow_loris orangutan gorilla
+)
 
 src=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered
 dst=/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results
@@ -16,7 +18,7 @@ meshgeometry=/Users/ghfc/Applications/brainbits/meshgeometry/meshgeometry_mac
 # process
 for i in ${db1[@]}
 do
-	mkdir $dst/$i
-	mkdir $dst/$i/surf
+#	mkdir $dst/$i
+#	mkdir $dst/$i/surf
 	source prepare.sh $src/$i/both $dst/$i/surf/rh
 done

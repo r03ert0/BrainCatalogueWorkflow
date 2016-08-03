@@ -1,0 +1,9 @@
+1. create the mesh
+2. copy it to the folder ‘/meshes_centered’ and centre the mesh with EditMesh (keep not-centred mesh as well!)
+3. split hemispheres with Julien’s script ‘../JL_Toolboxes_v1.2/hemi_cut.m’
+4. run surfaceratio.sh on the left and right hemispheres
+5. run combine-left-right.sh to combine surface ratio from hemispheres on the whole brain (doesn’t work for roberto’s brain)
+6. make pictures (visualize_surfaceratio.m) of the surface ration to check if it’s ok
+7. update allometric plot and species_data.csv 
+8. run prepare.sh to get the data for running SphericalDemons (either with Roberto’s or Julien’s spheres)
+9. 

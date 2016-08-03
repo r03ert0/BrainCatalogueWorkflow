@@ -79,13 +79,14 @@ if narg==4
     nVertices=size(FV.vertices,1);
     
     %calculate normals and curvature of FV
-    hf=figure('Visible','off');
-    hp=patch(FV);
-    normals=get(hp,'VertexNormals');
-    close(hf);
-    %Make the normals unit norm
-    [nrm,normalsnrm]=colnorm(normals');
-    
+%    hf=figure('Visible','on');
+%    hp=patch(FV); 
+%    %hp=my_view_surface(FV);
+%    normals=get(hp,'VertexNormals');
+%    close(hf);
+   
+   normalsnrm=vertex_normals(FV);
+   
     if(VERBOSE)
         hwait = waitbar(0,sprintf('Calculating curvature...'));
         drawnow %flush the display
@@ -102,6 +103,7 @@ if narg==4
             end
         end
         nNeighbours=length(VertConn{i}); %number of neighbours
+        
         edgevector=FV.vertices(VertConn{i},:)-repmat(FV.vertices(i,:),nNeighbours,1); %vectors joining vertex with neighbours
         [nrm,edgevector]=colnorm(edgevector');
         curvature(i)=mean(acos(normalsnrm(:,i)'*edgevector))-pi/2;

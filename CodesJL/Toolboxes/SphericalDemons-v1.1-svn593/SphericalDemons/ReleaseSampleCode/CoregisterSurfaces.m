@@ -125,7 +125,7 @@
 %   because we did not strongly explore the tradeoff in our Spherical Demons paper.
 %
 
-function CoregisterSurfaces(hemi, SUBJECTS_DIR, subject_cell, DISPLAY_ATLAS)
+function CoregisterSurfaces(hemi, SUBJECTS_DIR, subject_cell, uniform_mesh_dir,DISPLAY_ATLAS)
 
 % =========================================================================
 % Create a default Atlas parameter structure. Feel free to change the parameters we set here 
@@ -145,6 +145,7 @@ if(nargin < 4)
 else
     SD_atlas = CreateDefaultAtlasParm(hemi);        %left hemisphere ('lh') or right hemisphere ('rh')
     SD_atlas.parms.SUBJECTS_DIR = SUBJECTS_DIR;     % directory that contains subjects
+    SD_atlas.parms.uniform_mesh_dir=uniform_mesh_dir;
     SD_atlas.parms.subject_cell = subject_cell;     % a cell of subjects in SUBJECTS_DIR
 end
 

@@ -79,10 +79,10 @@ addpath('CodesJL/')
 [vertices,faces]=read_ply(['meshes_centered/' specie '/' hemi '.ply']);
 FV.faces=faces;
 FV.vertices=vertices;
-sr_5mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '.sratio_5mm.curv']);
-sr_10mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '.sratio_10mm.curv']);
-sr_15mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '.sratio_15mm.curv']);
-sr_20mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '.sratio_20mm.curv']);
+sr_5mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '_5mm.curv']);
+sr_10mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '_10mm.curv']);
+sr_15mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '_15mm.curv']);
+sr_20mm = read_curv(['meshes_centered/' specie '/surfaceratio/' hemi '_20mm.curv']);
 
 
 fig_1 = figure(1);

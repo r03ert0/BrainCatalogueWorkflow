@@ -1,0 +1,316 @@
+% Toolboxes
+ToolboxFolder='/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/CodesJL/Toolboxes/';
+addpath(genpath(ToolboxFolder))
+
+% Data
+DataFolder='/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/meshes_centered/';
+content=dir(DataFolder);
+Ns=10;
+
+%% --------------------
+% Spherical Mapping with LBO eigenfunctions
+%%-------
+
+cpt=1;
+allsphFV=cell(Ns,1)
+for ii=4:length(content)
+    if content(ii).name=='.'
+    elseif isequal(content(ii).name,'chimpanzee')
+        cpt=cpt+1;
+    else
+        [vertices,faces]=read_ply([DataFolder,content(ii).name,'/','both.ply']);
+        FV.faces=faces;
+        FV.vertices=vertices;
+
+        % Spherical Parameterization
+        [A2,G,~,aires]=heat_matrices(FV.faces,FV.vertices,3,1);
+        [V,D]=eigs(A2,G,5,'sm');
+        if isequal(content(ii).name,'slow_loris')
+            [allsphFV{cpt},Vt]=map2sphere(FV,[3 2 1],0,V(:,[2 3 4]));
+        else
+            [allsphFV{cpt},Vt]=map2sphere(FV,[3 2 1],0,V(:,[1 3 4]));
+        end
+        cpt=cpt+1;
+    end
+end
+
+%% ----------------------------------------
+% Surface Ratio/Curvedness & Shape Index
+%----------------------------------------
+angles=[-100 10;90 0];
+
+figure(1)
+figure(2)
+cpt=1;
+
+GIs=cell(Ns,1);
+allC=cell(Ns,1);
+allSI=cell(Ns,1);
+allCurvatures=cell(Ns,1);
+volumes=zeros(Ns,1);
+areas=zeros(Ns,1);
+for ii=7:length(content)
+    if content(ii).name=='.'
+    elseif isequal(content(ii).name,'chimpanzee')
+        cpt=cpt+1;
+    else
+        [vertices,faces]=read_ply([DataFolder,content(ii).name,'/','both.ply']);
+        FV.faces=faces;
+        FV.vertices=vertices;
+        tic
+        vertConn=vertices_connectivity(FV);
+        [allCurvatures{cpt},check_normalization]=principal_curvature(FV,vertConn);
+        toc
+        [allC{cpt},allSI{cpt},stats(:,cpt)]=curvedness_shape(allCurvatures{cpt},1);
+        GIs{cpt}=fold_quantification_toro(FV,8);
+        volumes(cpt)=surface_volume(FV);
+        aires=tri_area(FV.faces,FV.vertices);
+        areas(cpt)=sum(aires);
+        cpt=cpt+1;
+    end
+end
+
+%% ---
+% Visualization of shape index, curvedness, mean curvature
+%
+angles=[-100 10;129 -40];
+
+textures=allCurvatures;
+figure
+cpt=1
+for n=1:Ns
+   if n==4
+   else
+      subplot(3,3,cpt)
+      map=mean(textures{n},2);
+      if size(map,1)==1
+          map=map';
+      end
+      my_view_surface(allsphFV{n},map)
+      view(angles(1,1),angles(1,2))
+        zoom(1.7)
+        cpt=cpt+1;
+        caxis([-0.2 0.2])
+   end
+end
+
+%% ---
+% Spherical demons
+%
+
+i1=4;
+i2=6;
+[vertices,faces]=read_ply([DataFolder,content(i1).name,'/','both.ply']);
+FV1.faces=faces;
+FV1.vertices=vertices;
+[inflatedH1,curv1,sulc1,smoothedFV1]=FSLike_curvatures(FV1,1);
+
+hemi = 'rh'
+
+if hemi == 'rh'
+    name1=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/', content(i1).name, '/surf/rh.sphere'];
+   
+    [vertex_coords, faces] = read_surf(name1);
+    vertex_coords=vertex_coords-repmat(mean(vertex_coords,1),length(vertex_coords),1);
+    vertex_coords=vertex_coords./repmat
+    write
+else
+    
+    
+    name1=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/', content(i1).name, '/surf/lh'];
+    write_curv([name1,'.inflated.H'],-inflatedH,length(FV1.faces));
+    write_curv([name1,'.curv'],-curv,length(FV1.faces));
+    write_curv([name1,'.sulc'],sulc,length(FV1.faces));
+    name1=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/', content(i1).name, '/surf/lh.sphere'];
+    sphFV=allsphFV{i1-3};
+    sphFV.faces=sphFV.faces(:,[1 3 2]); % change orientation
+    write_surf(100*sphFV.vertices, sphFV.faces-1, name1);
+    
+    [vertices,faces]=read_ply([DataFolder,content(i2).name,'/','both.ply']);
+    FV2.faces=faces;
+    FV2.vertices=vertices;
+    [inflatedH2,curv2,sulc2,smoothedFV2]=FSLike_curvatures(FV2,1);
+    
+    name2=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/', content(i2).name, '/surf/lh'];
+    write_curv([name2,'.inflated.H'],-inflatedH,length(FV2.faces));
+    write_curv([name2,'.curv'],-curv,length(FV2.faces));
+    write_curv([name2,'.sulc'],sulc,length(FV2.faces));
+    
+    
+    name2=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/', content(i2).name, '/surf/lh.sphere'];
+    sphFV=allsphFV{i2-3};
+    sphFV.faces=sphFV.faces(:,[1 3 2]); % change orientation
+    write_surf(100*sphFV.vertices, sphFV.faces-1, name2);
+end
+
+SUBJECTS_DIR='/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results';
+subject_cell={'baboon','ce_macaque'};
+uniform_mesh_dir='/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/CodesJL/Toolboxes/SphericalDemons-v1.1-svn593/'; 
+DISPLAY_ATLAS=1;
+
+CoregisterSurfaces(hemi, SUBJECTS_DIR, subject_cell,uniform_mesh_dir,DISPLAY_ATLAS);
+
+%% --
+% Visualization
+%
+
+% Warp
+name1=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/baboon/SD/',hemi,'.2.warp.mat'];
+warp1=load(name1);
+name2=['/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/ce_macaque/SD/',hemi,'.2.warp.mat'];
+warp2=load(name2);
+sphFV1=allsphFV{i1-3};
+sphFV2=allsphFV{i2-3};
+options.rot=-1;
+
+figure
+subplot(2,3,1)
+my_view_surface(sphFV1,-sulc1,options);
+subplot(2,3,2)
+warp_sphFV1=sphFV1;
+warp_sphFV1.vertices=double(warp1.sbjWarp.curr_vertices');
+my_view_surface(warp_sphFV1,-sulc1,options);
+subplot(2,3,4)
+my_view_surface(sphFV2,-sulc2,options);
+subplot(2,3,5)
+warp_sphFV2=sphFV2;
+warp_sphFV2.vertices=double(warp2.sbjWarp.curr_vertices');
+my_view_surface(warp_sphFV2,-sulc2,options);
+
+% displacement
+dis1=sqrt(sum((warp_sphFV1.vertices-100*sphFV1.vertices).^2,2));
+dis2=sqrt(sum((warp_sphFV2.vertices-100*sphFV2.vertices).^2,2));
+
+subplot(2,3,3)
+my_view_surface(warp_sphFV1,dis1,options);
+subplot(2,3,6)
+my_view_surface(warp_sphFV2,dis2,options);
+
+% Visualize displacement
+my_view_surface(warp_sphFV1,dis1);
+hold on
+%plot3(warp_sphFV1.vertices(:,1),warp_sphFV1.vertices(:,2),warp_sphFV1.vertices(:,3),'+r')
+%plot3(100*sphFV1.vertices(:,1),100*sphFV1.vertices(:,2),100*sphFV1.vertices(:,3),'+g')
+dis_vec1=warp_sphFV1.vertices-100*sphFV1.vertices;
+quiver3(100*sphFV1.vertices(:,1),100*sphFV1.vertices(:,2),100*sphFV1.vertices(:,3),dis_vec1(:,1),dis_vec1(:,2),dis_vec1(:,3),'k')
+
+% Movie
+figure(1)
+my_view_surface(sphFV1,-sulc1);
+hold on
+%quiver3(sphFV1.vertices(:,1),sphFV1.vertices(:,2),sphFV1.vertices(:,3),dis_vec1(:,1),dis_vec1(:,2),dis_vec1(:,3),'k')
+view(-23,-60)
+
+figure(2)
+my_view_surface(warp_sphFV1,-sulc1);
+view(-23,-60)
+
+for k=1:10
+   figure(1)
+   pause(0.1)
+   figure(2)
+   pause(0.1)
+end
+
+%% 
+
+% Resampling
+clear FV_template
+FV_template_tmp=MARS_readUniformMesh(uniform_mesh_dir, 'ic7.tri');
+FV_template.faces=double(FV_template_tmp.faces');
+FV_template.vertices=double(FV_template_tmp.vertices');
+clear FV_template_tmp
+
+tex_out=tex_to_mesh_SD(warp_sphFV2.vertices,warp_sphFV1,[FV1.vertices curv1]); 
+warp_FV1=FV2;
+warp_FV1.vertices=double(tex_out(:,1:3));
+
+tex_out=tex_to_mesh_SD(FV_template.vertices,warp_sphFV1,[FV1.vertices curv1]); 
+warp_FV1=FV_template;
+warp_FV1.vertices=double(tex_out(:,1:3));
+
+figure(1)
+my_view_surface(warp_FV1,tex_out(:,4),options)
+view(-90,0)
+figure(2)
+my_view_surface(FV2,curv2,options)
+view(-90,0)
+for k=1:10
+   figure(1)
+   pause(0.1)
+   figure(2)
+   pause(0.1)
+end
+%%
+% ICP
+[verts1,verts2,R,T,E]=icp(warp_FV1.vertices,FV2.vertices,20);
+tmpFV1=FV2;
+tmpFV1.vertices=verts1;
+tmpFV2=FV2;
+tmpFV2.vertices=verts2;
+my_view_surface(tmpFV2,curv2,options)
+hold on
+my_view_surface(tmpFV1,tex_out(:,4),options)
+
+% Continuous movie
+MOVIE=0;
+if MOVIE
+aviobj = avifile('/Users/ghfc/Documents/Dropbox/hugo_is_dead/scripts/BrainCatalogueWorkflow/results/movie_baboon_macaque.avi')
+end
+time_steps=linspace(0,1,20);
+m=min(tmpFV2.vertices);
+m=m-20;
+M=max(tmpFV2.vertices);
+M=M+20;
+hf=figure
+options2.rot=-1;
+options2.angle=[180 -70];
+type='linear' % temporal interpolation: 'linear', 'fiedler' or 'inv_fiedler'
+
+for k=1:length(time_steps)
+   tmpFV=FV2;
+   a=tmpFV1.vertices;
+   b=tmpFV2.vertices;
+   switch type
+       case 'linear'
+           tmpFV.vertices=time_steps(k)*b+(1-time_steps(k))*a;
+       case 'fiedler'
+           tbar=(V2(:,end-1).^2/max(V2(:,end-1).^2));
+           tbar=repmat((2-1/2)*tbar+(1/2),1,3);
+           tmpFV.vertices=fonction(tbar,time_steps(k),a,b);
+%         case 'inv_fielder'
+%             tbar=(V2(:,end-1).^2/max(V2(:,end-1).^2));
+%             tbar=1-tbar;
+%             tbar=repmat((2-1/2)*tbar+(1/2),1,3);
+%             tmpFV.vertices=fonction(tbar,time_steps(k),a,b);
+   end
+   if MOVIE
+       if k==1
+           VertConn=vertices_connectivity(tmpFV);
+       end
+       [~,curvature]=curvature_cortex(tmpFV,VertConn,1,0);
+       curv=smooth_cortical_maps(tmpFV,-curvature,50,0.1,0);
+   end
+   close all
+   if MOVIE
+       my_view_surface(tmpFV,curv,options2)
+       caxis([-0.2 0.3])
+   else
+       my_view_surface(tmpFV,zeros(length(tmpFV2.vertices),1),options2)
+   end
+   view(178,-70)
+   xlim([-M(1) -m(1)])
+   ylim([-M(2) -m(2)])
+   zlim([-M(3) -m(3)])
+   zoom off
+   if MOVIE
+   F = getframe(hf);
+   aviobj = addframe(aviobj,F);
+   else
+       pause(0.5)
+   end
+end
+if MOVIE
+close(hf)
+aviobj = close(aviobj);
+end
